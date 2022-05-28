@@ -1,65 +1,49 @@
 import "mapbox-gl/dist/mapbox-gl.css";
 import "react-map-gl-geocoder/dist/mapbox-gl-geocoder.css";
-import React, { useState, useRef, useCallback } from "react";
+import React, { useState } from "react";
 import { render } from "react-dom";
-import MapGL from "react-map-gl";
-import Geocoder from "react-map-gl-geocoder";
-import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import "./App.css"
+import Home from "./pages/Home";
+import Result from "./pages/Result"
 
 // Please be a decent human and don't abuse my Mapbox API token.
 // If you fork this sandbox, replace my API token with your own.
 // Ways to set Mapbox token: https://uber.github.io/react-map-gl/#/Documentation/getting-started/about-mapbox-tokens
 const MAPBOX_TOKEN =
-  "pk.eyJ1Ijoic21peWFrYXdhIiwiYSI6ImNqcGM0d3U4bTB6dWwzcW04ZHRsbHl0ZWoifQ.X9cvdajtPbs9JDMG-CMDsA";
+  "pk.eyJ1IjoiZGV2bGlucm9jaGEiLCJhIjoiY2t2bG82eTk4NXFrcDJvcXBsemZzdnJoYSJ9.aq3RAvhuRww7R_7q-giWpA";
 
 const App = () => {
-  const navigate = useNavigate();
-  const [viewport, setViewport] = useState({
-    latitude: 37.7577,
-    longitude: -122.4376,
-    zoom: 8
+
+  const [result, setResult] = useState({
+    latitude: 24.8607,
+    longitude: 67.0011,
+    location: "Karachi"
   });
-  const geocoderContainerRef = useRef();
-  const mapRef = useRef();
-  const handleViewportChange = useCallback(
-    (newViewport) => setViewport(newViewport),
-    []
-  );
+
+
+  // const onSelected = (viewPort, item) => {
+  //   navigate("/map");
+  //   console.log(viewPort);
+  //   setViewport({ ...viewPort, zoom: viewPort.zoom * 20 });
+  //   console.log('Selected: ', item)
+  // }
 
   return (
     <div style={{ height: "100vh" }}>
-      <div
-        ref={geocoderContainerRef}
-        style={{ position: "absolute", top: 20, left: 20, zIndex: 1 }}
-      />
       <Routes>
         <Route
           path="/"
           exact
           element={
-            <Geocoder
-              mapRef={mapRef}
-              containerRef={geocoderContainerRef}
-              onViewportChange={handleViewportChange}
-              mapboxApiAccessToken={MAPBOX_TOKEN}
-              onResults={() => navigate("/map")}
-              onClick={console.log("run")}
-              position="top-left"
-            />
+            <Home result={result} setResult={setResult} />
           }
         />
         <Route
-          path="/map"
+          path="/result"
           exact
           element={
-            <MapGL
-              ref={mapRef}
-              {...viewport}
-              width="100%"
-              height="100%"
-              onViewportChange={handleViewportChange}
-              mapboxApiAccessToken={MAPBOX_TOKEN}
-            />
+            <Result result={result} />
           }
         />
       </Routes>
